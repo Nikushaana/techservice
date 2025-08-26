@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { CompanyClientToken } from 'src/company-client-token/entities/company-client-token.entity';
+import { Order } from 'src/order/entities/order.entity';
 import {
   Column,
   CreateDateColumn,
@@ -32,7 +33,7 @@ export class CompanyClient {
 
   @Column({ default: false })
   status: boolean;
-  
+
   @Exclude()
   @Column()
   password: string;
@@ -42,6 +43,9 @@ export class CompanyClient {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @OneToMany(() => Order, (order) => order.company)
+  orders: Order[];
 
   @OneToOne(() => CompanyClientToken, (token) => token.companyClient)
   token: CompanyClientToken;

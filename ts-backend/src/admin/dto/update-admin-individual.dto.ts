@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString, Matches, MinLength } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString, Matches, MinLength } from 'class-validator';
 
 export class UpdateAdminIndividualDto {
     @IsOptional()
@@ -9,14 +9,17 @@ export class UpdateAdminIndividualDto {
 
     @IsOptional()
     @IsString()
+    @IsNotEmpty()
     name: string;
 
     @IsOptional()
     @IsString()
+    @IsNotEmpty()
     lastName: string;
 
     @IsOptional()
     @IsBoolean()
+    @IsNotEmpty()
     status: boolean;
 
     @IsOptional()

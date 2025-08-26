@@ -8,6 +8,8 @@ import { AdminModule } from './admin/admin.module';
 import { AuthModule } from './auth/auth.module';
 import { IndividualClientModule } from './individual-client/individual-client.module';
 import { CompanyClientModule } from './company-client/company-client.module';
+import { OrderModule } from './order/order.module';
+import { FrontModule } from './front/front.module';
 
 @Module({
   imports: [
@@ -51,6 +53,8 @@ import { CompanyClientModule } from './company-client/company-client.module';
     AuthModule,
     IndividualClientModule,
     CompanyClientModule,
+    OrderModule,
+    FrontModule,
   ],
   controllers: [AppController],
   providers: [AppService],

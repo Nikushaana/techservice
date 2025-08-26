@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Admin } from './entities/admin.entity';
 import { Not, Repository } from 'typeorm';
@@ -9,6 +9,11 @@ import { IndividualClient } from 'src/individual-client/entities/individual-clie
 import { UpdateAdminIndividualDto } from './dto/update-admin-individual.dto';
 import { CompanyClient } from 'src/company-client/entities/company-client.entity';
 import { UpdateAdminCompanyDto } from './dto/update-admin-company.dto';
+import { Order } from 'src/order/entities/order.entity';
+import { UpdateAdminOrderDto } from 'src/order/dto/update-admin-order.dto';
+import { CreateCategoryDto } from 'src/category/dto/create-category.dto';
+import { Category } from 'src/category/entities/category.entity';
+import { UpdateCategoryDto } from 'src/category/dto/update-category.dto';
 
 @Injectable()
 export class AdminService {
@@ -21,6 +26,12 @@ export class AdminService {
 
     @InjectRepository(CompanyClient)
     private companyClientRepo: Repository<CompanyClient>,
+
+    @InjectRepository(Order)
+    private readonly orderRepo: Repository<Order>,
+
+    @InjectRepository(Category)
+    private readonly categoryRepo: Repository<Category>,
   ) { }
 
   // admin
@@ -163,6 +174,87 @@ export class AdminService {
     return {
       message: 'Individual updated successfully',
       user: instanceToPlain(updatedAdminCompany),
+    };
+  }
+
+  // orders
+
+  async getOrders() {
+    const orders = await this.orderRepo.find({
+      order: { created_at: 'DESC' },
+      relations: ['individual', 'company'],
+    });
+
+    return instanceToPlain(orders);
+  }
+
+  async getOneOrder(id: number) {
+    const order = await this.orderRepo.findOne({
+      where: { id },
+      relations: ['individual', 'company'],
+    });
+    if (!order) throw new NotFoundException('Order not found');
+
+    return instanceToPlain(order)
+  }
+
+  async updateOneOrder(id: number, updateAdminOrderDto: UpdateAdminOrderDto) {
+    const order = await this.orderRepo.findOne({
+      where: { id },
+      relations: ['individual', 'company'],
+    });
+    if (!order) throw new NotFoundException('Order not found');
+
+    this.orderRepo.merge(order, updateAdminOrderDto);
+    await this.orderRepo.save(order);
+
+    return {
+      message: 'Order updated successfully',
+      order: instanceToPlain(order),
+    };
+  }
+
+  // categories
+
+  async createCategory(createCategoryDto: CreateCategoryDto) {
+    const existing = await this.categoryRepo.findOne({ where: { name: createCategoryDto.name } });
+    if (existing) throw new BadRequestException('Category already exists');
+
+    const category = this.categoryRepo.create(createCategoryDto);
+    await this.categoryRepo.save(category);
+
+    return { message: `Category  created successfully`, category };
+  }
+
+  async getCategories() {
+    const categories = await this.categoryRepo.find({
+      order: { created_at: 'DESC' },
+    });
+
+    return categories;
+  }
+
+  async getOneCategory(id: number) {
+    const category = await this.categoryRepo.findOne({
+      where: { id },
+    });
+    if (!category) throw new NotFoundException('Category not found');
+
+    return category
+  }
+
+  async updateOneCategory(id: number, updateCategoryDto: UpdateCategoryDto) {
+    const category = await this.categoryRepo.findOne({
+      where: { id },
+    });
+    if (!category) throw new NotFoundException('Category not found');
+
+    this.categoryRepo.merge(category, updateCategoryDto);
+    await this.categoryRepo.save(category);
+
+    return {
+      message: 'Category updated successfully',
+      category,
     };
   }
 }

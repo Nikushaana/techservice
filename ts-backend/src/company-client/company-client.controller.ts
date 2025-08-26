@@ -6,7 +6,7 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import type { RequestInfo } from 'src/common/types/request-info';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { ChangeNumberDto, PhoneDto } from 'src/verification-code/dto/verification-code.dto';
-import { ChangePasswordDto } from 'src/common/services/change-main-info/dto/change-password.dto';
+import { ChangePasswordDto } from 'src/common/services/base-user/dto/change-password.dto';
 
 @Controller('company')
 export class CompanyClientController {

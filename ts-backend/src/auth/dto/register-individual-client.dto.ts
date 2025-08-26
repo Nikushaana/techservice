@@ -1,4 +1,4 @@
-import { Matches, MinLength, IsString } from 'class-validator';
+import { Matches, MinLength, IsString, IsNotEmpty } from 'class-validator';
 
 export class RegisterIndividualClientDto {
   @IsString()
@@ -8,9 +8,11 @@ export class RegisterIndividualClientDto {
   phone: string;
 
   @IsString()
+  @IsNotEmpty()
   name: string;
 
   @IsString()
+  @IsNotEmpty()
   lastName: string;
 
   @IsString()

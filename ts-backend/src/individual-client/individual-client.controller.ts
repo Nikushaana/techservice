@@ -1,12 +1,14 @@
-import { Body, Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { IndividualClientService } from './individual-client.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import type { RequestInfo } from 'src/common/types/request-info';
 import { UpdateIndividualDto } from './dto/update-individual.dto';
-import { ChangePasswordDto } from 'src/common/services/change-main-info/dto/change-password.dto';
+import { ChangePasswordDto } from 'src/common/services/base-user/dto/change-password.dto';
 import { ChangeNumberDto, PhoneDto } from 'src/verification-code/dto/verification-code.dto';
+import { CreateOrderDto } from 'src/order/dto/create-order.dto';
+import { UpdateIndividualOrderDto } from 'src/order/dto/update-individual-order.dto';
 
 @Controller('individual')
 export class IndividualClientController {
@@ -49,5 +51,35 @@ export class IndividualClientController {
   @Post('change-number')
   async changeNumber(@Req() req: RequestInfo, @Body() changeNumberDto: ChangeNumberDto) {
     return this.individualClientService.changeNumber(req.user.id, changeNumberDto);
+  }
+
+  // order
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('individual_client')
+  @Post('create-order')
+  async createOrder(@Req() req: RequestInfo, @Body() createOrderDto: CreateOrderDto) {
+    return this.individualClientService.createOrder(req.user.id, createOrderDto);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('individual_client')
+  @Get('orders')
+  async getOrders(@Req() req: RequestInfo) {
+    return this.individualClientService.getOrders(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('individual_client')
+  @Get('orders/:id')
+  async getOneOrder(@Req() req: RequestInfo, @Param('id', ParseIntPipe) id: number) {
+    return this.individualClientService.getOneOrder(req.user.id, id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('individual_client')
+  @Patch('orders/:id')
+  async updateOneOrder(@Req() req: RequestInfo, @Param('id', ParseIntPipe) id: number, @Body() updateIndividualOrderDto: UpdateIndividualOrderDto) {
+    return this.individualClientService.updateOneOrder(req.user.id, id, updateIndividualOrderDto);
   }
 }

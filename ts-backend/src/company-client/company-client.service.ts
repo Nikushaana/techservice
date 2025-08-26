@@ -9,8 +9,8 @@ import { IndividualClient } from 'src/individual-client/entities/individual-clie
 import { ChangeNumberDto, PhoneDto, VerifyCodeDto } from 'src/verification-code/dto/verification-code.dto';
 import { VerificationCodeService } from 'src/verification-code/verification-code.service';
 import { VerificationCode } from 'src/verification-code/entities/verification-code.entity';
-import { ChangeMainInfoService } from 'src/common/services/change-main-info/change-main-info.service';
-import { ChangePasswordDto } from 'src/common/services/change-main-info/dto/change-password.dto';
+import { ChangePasswordDto } from 'src/common/services/base-user/dto/change-password.dto';
+import { BaseUserService } from 'src/common/services/base-user/base-user.service';
 
 @Injectable()
 export class CompanyClientService {
@@ -18,7 +18,7 @@ export class CompanyClientService {
     @InjectRepository(CompanyClient)
     private companyClientRepo: Repository<CompanyClient>,
 
-    private readonly changeMainInfoService: ChangeMainInfoService,
+    private readonly baseUserService: BaseUserService,
 
     private readonly verificationCodeService: VerificationCodeService,
   ) { }
@@ -26,31 +26,15 @@ export class CompanyClientService {
   // company
 
   async getCompany(companyId: number) {
-    const findCompany = await this.companyClientRepo.findOne({
-      where: { id: companyId },
-    });
-
-    if (!findCompany) throw new NotFoundException('Company client not found');
-
-    return instanceToPlain(findCompany);
+    return this.baseUserService.getUser(companyId, this.companyClientRepo);
   }
 
   async updateCompany(companyId: number, updateCompanyDto: UpdateCompanyDto) {
-    const company = await this.companyClientRepo.findOne({ where: { id: companyId } });
-    if (!company) throw new NotFoundException('Company not found');
-
-    const updatedCompany = this.companyClientRepo.merge(company, updateCompanyDto);
-
-    await this.companyClientRepo.save(updatedCompany);
-
-    return {
-      message: 'Company updated successfully',
-      user: instanceToPlain(updatedCompany),
-    };
+    return this.baseUserService.updateUser(companyId, this.companyClientRepo, updateCompanyDto);
   }
 
   async changePassword(companyId: number, changePasswordDto: ChangePasswordDto) {
-    return this.changeMainInfoService.changePassword(this.companyClientRepo, companyId, changePasswordDto);
+    return this.baseUserService.changePassword(this.companyClientRepo, companyId, changePasswordDto);
   }
 
   // send and verify sent code
@@ -62,6 +46,6 @@ export class CompanyClientService {
   }
 
   async changeNumber(companyId: number, changeNumberDto: ChangeNumberDto) {
-    return this.changeMainInfoService.changeNumber(this.companyClientRepo, companyId, changeNumberDto);
+    return this.baseUserService.changeNumber(this.companyClientRepo, companyId, changeNumberDto);
   }
 }

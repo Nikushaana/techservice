@@ -1,4 +1,4 @@
-import { IsBoolean, IsOptional, IsString, Matches, MinLength } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString, Matches, MinLength } from 'class-validator';
 
 export class UpdateAdminCompanyDto {
     @IsOptional()
@@ -9,22 +9,27 @@ export class UpdateAdminCompanyDto {
 
     @IsOptional()
     @IsString()
+    @IsNotEmpty()
     companyAgentName: string;
 
     @IsOptional()
     @IsString()
+    @IsNotEmpty()
     companyAgentLastName: string;
 
     @IsOptional()
     @IsString()
+    @IsNotEmpty()
     companyName: string;
 
     @IsOptional()
     @IsString()
+    @IsNotEmpty()
     companyIdentificationCode: string;
 
     @IsOptional()
     @IsBoolean()
+    @IsNotEmpty()
     status: boolean;
 
     @IsOptional()

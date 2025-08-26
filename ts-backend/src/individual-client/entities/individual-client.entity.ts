@@ -1,6 +1,7 @@
 import { Exclude } from 'class-transformer';
 import { IsBoolean } from 'class-validator';
 import { IndividualClientToken } from 'src/individual-client-token/entities/individual-client-token.entity';
+import { Order } from 'src/order/entities/order.entity';
 import {
   Column,
   CreateDateColumn,
@@ -37,6 +38,9 @@ export class IndividualClient {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @OneToMany(() => Order, (order) => order.individual)
+  orders: Order[];
 
   @OneToOne(() => IndividualClientToken, (token) => token.individualClient)
   token: IndividualClientToken;

@@ -5,10 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CompanyClient } from './entities/company-client.entity';
 import { IndividualClient } from 'src/individual-client/entities/individual-client.entity';
 import { VerificationCodeModule } from 'src/verification-code/verification-code.module';
-import { ChangeMainInfoModule } from 'src/common/services/change-main-info/change-main-info.module';
+import { BaseUserModule } from 'src/common/services/base-user/base-user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CompanyClient]), ChangeMainInfoModule, VerificationCodeModule],
+  imports: [TypeOrmModule.forFeature([CompanyClient]), BaseUserModule, VerificationCodeModule],
   controllers: [CompanyClientController],
   providers: [CompanyClientService],
 })
