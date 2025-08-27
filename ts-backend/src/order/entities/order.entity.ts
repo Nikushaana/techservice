@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer';
+import { Address } from 'src/address/entities/address.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { OrderStatus } from 'src/common/types/order-status.enum';
 import { CompanyClient } from 'src/company-client/entities/company-client.entity';
@@ -30,8 +31,8 @@ export class Order {
   @Column()
   description: string;
 
-  @Column()
-  address: string;
+  @ManyToOne(() => Address, (address) => address.orders, { eager: true })
+  address: Address;
 
   @ManyToOne(() => CompanyClient, (company) => company.orders, { nullable: true })
   company: CompanyClient;

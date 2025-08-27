@@ -8,6 +8,11 @@ export class UpdateAdminOrderDto {
     categoryId: number;
 
     @IsOptional()
+    @IsNumber()
+    @IsNotEmpty()
+    addressId: number;
+
+    @IsOptional()
     @IsString()
     @IsNotEmpty()
     brand: string;
@@ -21,11 +26,6 @@ export class UpdateAdminOrderDto {
     @IsString()
     @IsNotEmpty()
     description: string;
-
-    @IsOptional()
-    @IsString()
-    @IsNotEmpty()
-    address: string;
 
     @IsOptional()
     @IsEnum(OrderStatus)

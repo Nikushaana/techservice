@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { CompanyClientService } from './company-client.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
@@ -7,6 +7,10 @@ import type { RequestInfo } from 'src/common/types/request-info';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { ChangeNumberDto, PhoneDto } from 'src/verification-code/dto/verification-code.dto';
 import { ChangePasswordDto } from 'src/common/services/base-user/dto/change-password.dto';
+import { CreateOrderDto } from 'src/order/dto/create-order.dto';
+import { UpdateUserOrderDto } from 'src/order/dto/update-user-order.dto';
+import { UpdateAddressDto } from 'src/address/dto/update-address.dto';
+import { CreateAddressDto } from 'src/address/dto/create-address.dto';
 
 @Controller('company')
 export class CompanyClientController {
@@ -48,4 +52,65 @@ export class CompanyClientController {
   async changeNumber(@Req() req: RequestInfo, @Body() changeNumberDto: ChangeNumberDto) {
     return this.companyClientService.changeNumber(req.user.id, changeNumberDto);
   }
+
+  // order
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('company_client')
+  @Post('create-order')
+  async createOrder(@Req() req: RequestInfo, @Body() createOrderDto: CreateOrderDto) {
+    return this.companyClientService.createOrder(req.user.id, createOrderDto);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('company_client')
+  @Get('orders')
+  async getOrders(@Req() req: RequestInfo) {
+    return this.companyClientService.getOrders(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('company_client')
+  @Get('orders/:id')
+  async getOneOrder(@Req() req: RequestInfo, @Param('id', ParseIntPipe) id: number) {
+    return this.companyClientService.getOneOrder(req.user.id, id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('company_client')
+  @Patch('orders/:id')
+  async updateOneOrder(@Req() req: RequestInfo, @Param('id', ParseIntPipe) id: number, @Body() updateUserOrderDto: UpdateUserOrderDto) {
+    return this.companyClientService.updateOneOrder(req.user.id, id, updateUserOrderDto);
+  }
+
+  // address
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('company_client')
+  @Post('create-address')
+  async createAddress(@Req() req: RequestInfo, @Body() createAddressDto: CreateAddressDto) {
+    return this.companyClientService.createAddress(req.user.id, createAddressDto);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('company_client')
+  @Get('addresses')
+  async getAddresses(@Req() req: RequestInfo) {
+    return this.companyClientService.getAddresses(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('company_client')
+  @Get('addresses/:id')
+  async getOneAddress(@Req() req: RequestInfo, @Param('id', ParseIntPipe) id: number) {
+    return this.companyClientService.getOneAddress(req.user.id, id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('company_client')
+  @Patch('addresses/:id')
+  async updateOneAddress(@Req() req: RequestInfo, @Param('id', ParseIntPipe) id: number, @Body() updateAddressDto: UpdateAddressDto) {
+    return this.companyClientService.updateOneAddress(req.user.id, id, updateAddressDto);
+  }
+
 }

@@ -1,4 +1,5 @@
 import { Exclude } from 'class-transformer';
+import { Address } from 'src/address/entities/address.entity';
 import { CompanyClientToken } from 'src/company-client-token/entities/company-client-token.entity';
 import { Order } from 'src/order/entities/order.entity';
 import {
@@ -46,6 +47,9 @@ export class CompanyClient {
 
   @OneToMany(() => Order, (order) => order.company)
   orders: Order[];
+
+  @OneToMany(() => Address, (address) => address.company)
+  addresses: Address[];
 
   @OneToOne(() => CompanyClientToken, (token) => token.companyClient)
   token: CompanyClientToken;

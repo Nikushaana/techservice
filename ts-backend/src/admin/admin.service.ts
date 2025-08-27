@@ -14,6 +14,8 @@ import { UpdateAdminOrderDto } from 'src/order/dto/update-admin-order.dto';
 import { CreateCategoryDto } from 'src/category/dto/create-category.dto';
 import { Category } from 'src/category/entities/category.entity';
 import { UpdateCategoryDto } from 'src/category/dto/update-category.dto';
+import { BaseUserService } from 'src/common/services/base-user/base-user.service';
+import { Address } from 'src/address/entities/address.entity';
 
 @Injectable()
 export class AdminService {
@@ -32,23 +34,23 @@ export class AdminService {
 
     @InjectRepository(Category)
     private readonly categoryRepo: Repository<Category>,
+
+    @InjectRepository(Address)
+    private readonly addressRepo: Repository<Address>,
+
+    private readonly baseUserService: BaseUserService,
   ) { }
 
   // admin
 
   async getAdmin(adminId: number) {
-    const findAdmin = await this.adminRepo.findOne({
-      where: { id: adminId },
-    });
-
-    if (!findAdmin) throw new NotFoundException('Admin not found');
+    const findAdmin = await this.baseUserService.getUser(adminId, this.adminRepo);
 
     return instanceToPlain(findAdmin);
   }
 
   async updateAdmin(adminId: number, updateAdminDto: UpdateAdminDto) {
-    const admin = await this.adminRepo.findOne({ where: { id: adminId } });
-    if (!admin) throw new NotFoundException('Admin not found');
+    const admin = await this.baseUserService.getUser(adminId, this.adminRepo);
 
     if (updateAdminDto.email && updateAdminDto.email !== admin.email) {
       const emailExists = await this.adminRepo.findOne({
@@ -82,21 +84,13 @@ export class AdminService {
   }
 
   async getAdminOneIndividual(individualId: number) {
-    const findOneIndividual = await this.individualClientRepo.findOne({
-      where: { id: individualId },
-    });
+    const findOneIndividual = await this.baseUserService.getUser(individualId, this.individualClientRepo);
 
-    if (!findOneIndividual) throw new NotFoundException('Individual not found');
-
-    return instanceToPlain(findOneIndividual);
+    return instanceToPlain(findOneIndividual)
   }
 
   async updateAdminOneIndividual(individualId: number, updateAdminIndividualDto: UpdateAdminIndividualDto) {
-    const findOneIndividual = await this.individualClientRepo.findOne({
-      where: { id: individualId },
-    });
-
-    if (!findOneIndividual) throw new NotFoundException('Individual not found');
+    const findOneIndividual = await this.baseUserService.getUser(individualId, this.individualClientRepo);
 
     if (updateAdminIndividualDto.phone && updateAdminIndividualDto.phone !== findOneIndividual.phone) {
       const phoneExists =
@@ -135,21 +129,13 @@ export class AdminService {
   }
 
   async getAdminOneCompany(companyId: number) {
-    const findOneCompany = await this.companyClientRepo.findOne({
-      where: { id: companyId },
-    });
+    const findOneCompany = await this.baseUserService.getUser(companyId, this.companyClientRepo);
 
-    if (!findOneCompany) throw new NotFoundException('Company not found');
-
-    return instanceToPlain(findOneCompany);
+    return instanceToPlain(findOneCompany)
   }
 
   async updateAdminOneCompany(companyId: number, updateAdminCompanyDto: UpdateAdminCompanyDto) {
-    const findOneCompany = await this.companyClientRepo.findOne({
-      where: { id: companyId },
-    });
-
-    if (!findOneCompany) throw new NotFoundException('Company not found');
+    const findOneCompany = await this.baseUserService.getUser(companyId, this.companyClientRepo);
 
     if (updateAdminCompanyDto.phone && updateAdminCompanyDto.phone !== findOneCompany.phone) {
       const phoneExists =
@@ -205,7 +191,23 @@ export class AdminService {
     });
     if (!order) throw new NotFoundException('Order not found');
 
-    this.orderRepo.merge(order, updateAdminOrderDto);
+    if (updateAdminOrderDto.addressId) {
+      const relationKey = order.company ? 'company' : 'individual';
+      const userId = order[relationKey].id;
+
+      const address = await this.addressRepo.findOne({
+        where: { id: updateAdminOrderDto.addressId, [relationKey]: { id: userId } },
+      });
+
+      if (!address) {
+        throw new NotFoundException('Address not found');
+      }
+
+      order.address = address;
+    }
+
+    const { addressId, ...rest } = updateAdminOrderDto;
+    this.orderRepo.merge(order, rest);
     await this.orderRepo.save(order);
 
     return {
@@ -256,5 +258,16 @@ export class AdminService {
       message: 'Category updated successfully',
       category,
     };
+  }
+
+  // addresses
+
+  async getUserAddresses(userId: number, role: 'individual' | 'company') {
+    const addresses = await this.addressRepo.find({
+      where: { [role]: { id: userId } },
+      order: { created_at: 'DESC' },
+    });
+
+    return addresses;
   }
 }

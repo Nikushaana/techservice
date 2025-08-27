@@ -5,6 +5,10 @@ export class CreateOrderDto {
     @IsNotEmpty()
     categoryId: number;
 
+    @IsNumber()
+    @IsNotEmpty()
+    addressId: number;
+
     @IsString()
     @IsNotEmpty()
     brand: string;
@@ -16,8 +20,4 @@ export class CreateOrderDto {
     @IsString()
     @IsNotEmpty()
     description: string;
-
-    @IsString()
-    @IsNotEmpty()
-    address: string;
 }

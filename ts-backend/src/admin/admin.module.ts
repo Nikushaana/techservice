@@ -7,9 +7,11 @@ import { IndividualClient } from 'src/individual-client/entities/individual-clie
 import { CompanyClient } from 'src/company-client/entities/company-client.entity';
 import { Order } from 'src/order/entities/order.entity';
 import { Category } from 'src/category/entities/category.entity';
+import { BaseUserModule } from 'src/common/services/base-user/base-user.module';
+import { Address } from 'src/address/entities/address.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Admin, IndividualClient, CompanyClient, Order, Category])],
+  imports: [TypeOrmModule.forFeature([Admin, IndividualClient, CompanyClient, Order, Category, Address]), BaseUserModule],
   providers: [AdminService],
   controllers: [AdminController],
 })

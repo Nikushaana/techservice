@@ -1,10 +1,15 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
-export class UpdateIndividualOrderDto {
+export class UpdateUserOrderDto {
     @IsOptional()
     @IsNumber()
     @IsNotEmpty()
     categoryId: number;
+    
+    @IsOptional()
+    @IsNumber()
+    @IsNotEmpty()
+    addressId: number;
 
     @IsOptional()
     @IsString()
@@ -20,9 +25,4 @@ export class UpdateIndividualOrderDto {
     @IsString()
     @IsNotEmpty()
     description: string;
-
-    @IsOptional()
-    @IsString()
-    @IsNotEmpty()
-    address: string;
 }

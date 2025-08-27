@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { IsBoolean } from 'class-validator';
+import { Address } from 'src/address/entities/address.entity';
 import { IndividualClientToken } from 'src/individual-client-token/entities/individual-client-token.entity';
 import { Order } from 'src/order/entities/order.entity';
 import {
@@ -41,6 +42,9 @@ export class IndividualClient {
 
   @OneToMany(() => Order, (order) => order.individual)
   orders: Order[];
+
+  @OneToMany(() => Address, (address) => address.individual)
+  addresses: Address[];
 
   @OneToOne(() => IndividualClientToken, (token) => token.individualClient)
   token: IndividualClientToken;

@@ -10,20 +10,16 @@ import { VerificationCodeService } from 'src/verification-code/verification-code
 import { BaseUserService } from 'src/common/services/base-user/base-user.service';
 import { CreateOrderDto } from 'src/order/dto/create-order.dto';
 import { Order } from 'src/order/entities/order.entity';
-import { UpdateIndividualOrderDto } from 'src/order/dto/update-individual-order.dto';
 import { Category } from 'src/category/entities/category.entity';
+import { UpdateUserOrderDto } from 'src/order/dto/update-user-order.dto';
+import { CreateAddressDto } from 'src/address/dto/create-address.dto';
+import { UpdateAddressDto } from 'src/address/dto/update-address.dto';
 
 @Injectable()
 export class IndividualClientService {
   constructor(
     @InjectRepository(IndividualClient)
     private individualClientRepo: Repository<IndividualClient>,
-
-    @InjectRepository(Order)
-    private readonly orderRepo: Repository<Order>,
-
-    @InjectRepository(Category)
-    private readonly categoryRepo: Repository<Category>,
 
     private readonly baseUserService: BaseUserService,
 
@@ -33,7 +29,9 @@ export class IndividualClientService {
   // individual
 
   async getIndividual(individualId: number) {
-    return this.baseUserService.getUser(individualId, this.individualClientRepo);
+    const findIndividual = await this.baseUserService.getUser(individualId, this.individualClientRepo);
+
+    return instanceToPlain(findIndividual);
   }
 
   async updateIndividual(individualId: number, updateIndividualDto: UpdateIndividualDto) {
@@ -59,70 +57,36 @@ export class IndividualClientService {
   // create order
 
   async createOrder(individualId: number, createOrderDto: CreateOrderDto) {
-    const individual = await this.individualClientRepo.findOne({ where: { id: individualId } });
-    if (!individual) throw new BadRequestException('Individual not found');
-
-    if (!individual.status) {
-      throw new BadRequestException('Inactive individual cannot create orders');
-    }
-
-    const category = await this.categoryRepo.findOne({ where: { id: createOrderDto.categoryId, status: true } });
-    if (!category) throw new NotFoundException('Category not found');
-
-    const order = this.orderRepo.create({
-      ...createOrderDto,
-      individual,
-      category
-    });
-
-    await this.orderRepo.save(order);
-
-    return { message: `Order created successfully`, order: instanceToPlain(order) };
+    return this.baseUserService.createOrder(individualId, this.individualClientRepo, createOrderDto);
   }
 
   async getOrders(individualId: number) {
-    const individual = await this.individualClientRepo.findOne({ where: { id: individualId } });
-    if (!individual) throw new BadRequestException('Individual not found');
-
-    const orders = await this.orderRepo.find({
-      where: { individual: { id: individualId } },
-      order: { created_at: 'DESC' },
-    });
-
-    return orders;
+    return this.baseUserService.getOrders(individualId, this.individualClientRepo);
   }
 
   async getOneOrder(individualId: number, id: number) {
-    const individual = await this.individualClientRepo.findOne({ where: { id: individualId } });
-    if (!individual) throw new BadRequestException('Individual not found');
-
-    const order = await this.orderRepo.findOne({
-      where: { individual: { id: individualId }, id },
-    });
-    if (!order) throw new NotFoundException('Order not found');
-
-    return order
+    return this.baseUserService.getOneOrder(individualId, id, this.individualClientRepo);
   }
 
-  async updateOneOrder(individualId: number, id: number, updateIndividualOrderDto: UpdateIndividualOrderDto) {
-    const individual = await this.individualClientRepo.findOne({ where: { id: individualId } });
-    if (!individual) throw new BadRequestException('Individual not found');
+  async updateOneOrder(individualId: number, id: number, updateUserOrderDto: UpdateUserOrderDto) {
+    return this.baseUserService.updateOneOrder(individualId, id, this.individualClientRepo, updateUserOrderDto);
+  }
 
-    const order = await this.orderRepo.findOne({
-      where: { individual: { id: individualId }, id },
-    });
-    if (!order) throw new NotFoundException('Order not found');
+  // create address
 
-    if (order.status !== 'pending') {
-      throw new BadRequestException('Only pending orders can be updated');
-    }
+  async createAddress(individualId: number, createAddressDto: CreateAddressDto) {
+    return this.baseUserService.createAddress(individualId, this.individualClientRepo, createAddressDto);
+  }
 
-    this.orderRepo.merge(order, updateIndividualOrderDto);
-    await this.orderRepo.save(order);
+  async getAddresses(individualId: number) {
+    return this.baseUserService.getAddresses(individualId, this.individualClientRepo);
+  }
 
-    return {
-      message: 'Order updated successfully',
-      order,
-    };
+  async getOneAddress(individualId: number, id: number) {
+    return this.baseUserService.getOneAddress(individualId, id, this.individualClientRepo);
+  }
+
+  async updateOneAddress(individualId: number, id: number, updateAddressDto: UpdateAddressDto) {
+    return this.baseUserService.updateOneAddress(individualId, id, this.individualClientRepo, updateAddressDto);
   }
 }

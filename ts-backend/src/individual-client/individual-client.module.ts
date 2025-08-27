@@ -11,7 +11,7 @@ import { Category } from 'src/category/entities/category.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([IndividualClient, IndividualClientToken, Order, Category]),
+    TypeOrmModule.forFeature([IndividualClient, IndividualClientToken]),
     BaseUserModule, VerificationCodeModule
   ],
   providers: [IndividualClientService],

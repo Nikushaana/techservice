@@ -10,6 +10,7 @@ import { IndividualClientModule } from './individual-client/individual-client.mo
 import { CompanyClientModule } from './company-client/company-client.module';
 import { OrderModule } from './order/order.module';
 import { FrontModule } from './front/front.module';
+import { AddressModule } from './address/address.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { FrontModule } from './front/front.module';
     CompanyClientModule,
     OrderModule,
     FrontModule,
+    AddressModule,
   ],
   controllers: [AppController],
   providers: [AppService],

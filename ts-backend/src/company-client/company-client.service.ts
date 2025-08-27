@@ -11,6 +11,12 @@ import { VerificationCodeService } from 'src/verification-code/verification-code
 import { VerificationCode } from 'src/verification-code/entities/verification-code.entity';
 import { ChangePasswordDto } from 'src/common/services/base-user/dto/change-password.dto';
 import { BaseUserService } from 'src/common/services/base-user/base-user.service';
+import { Category } from 'src/category/entities/category.entity';
+import { Order } from 'src/order/entities/order.entity';
+import { CreateOrderDto } from 'src/order/dto/create-order.dto';
+import { UpdateUserOrderDto } from 'src/order/dto/update-user-order.dto';
+import { CreateAddressDto } from 'src/address/dto/create-address.dto';
+import { UpdateAddressDto } from 'src/address/dto/update-address.dto';
 
 @Injectable()
 export class CompanyClientService {
@@ -26,7 +32,9 @@ export class CompanyClientService {
   // company
 
   async getCompany(companyId: number) {
-    return this.baseUserService.getUser(companyId, this.companyClientRepo);
+    const findCompany = await this.baseUserService.getUser(companyId, this.companyClientRepo);
+
+    return instanceToPlain(findCompany);
   }
 
   async updateCompany(companyId: number, updateCompanyDto: UpdateCompanyDto) {
@@ -47,5 +55,41 @@ export class CompanyClientService {
 
   async changeNumber(companyId: number, changeNumberDto: ChangeNumberDto) {
     return this.baseUserService.changeNumber(this.companyClientRepo, companyId, changeNumberDto);
+  }
+
+  // create order
+
+  async createOrder(companyId: number, createOrderDto: CreateOrderDto) {
+    return this.baseUserService.createOrder(companyId, this.companyClientRepo, createOrderDto);
+  }
+
+  async getOrders(companyId: number) {
+    return this.baseUserService.getOrders(companyId, this.companyClientRepo);
+  }
+
+  async getOneOrder(companyId: number, id: number) {
+    return this.baseUserService.getOneOrder(companyId, id, this.companyClientRepo);
+  }
+
+  async updateOneOrder(companyId: number, id: number, updateUserOrderDto: UpdateUserOrderDto) {
+    return this.baseUserService.updateOneOrder(companyId, id, this.companyClientRepo, updateUserOrderDto);
+  }
+
+  // create address
+
+  async createAddress(companyId: number, createAddressDto: CreateAddressDto) {
+    return this.baseUserService.createAddress(companyId, this.companyClientRepo, createAddressDto);
+  }
+
+  async getAddresses(companyId: number) {
+    return this.baseUserService.getAddresses(companyId, this.companyClientRepo);
+  }
+
+  async getOneAddress(companyId: number, id: number) {
+    return this.baseUserService.getOneAddress(companyId, id, this.companyClientRepo);
+  }
+
+  async updateOneAddress(companyId: number, id: number, updateAddressDto: UpdateAddressDto) {
+    return this.baseUserService.updateOneAddress(companyId, id, this.companyClientRepo, updateAddressDto);
   }
 }

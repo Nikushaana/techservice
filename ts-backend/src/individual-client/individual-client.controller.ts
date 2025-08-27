@@ -8,7 +8,9 @@ import { UpdateIndividualDto } from './dto/update-individual.dto';
 import { ChangePasswordDto } from 'src/common/services/base-user/dto/change-password.dto';
 import { ChangeNumberDto, PhoneDto } from 'src/verification-code/dto/verification-code.dto';
 import { CreateOrderDto } from 'src/order/dto/create-order.dto';
-import { UpdateIndividualOrderDto } from 'src/order/dto/update-individual-order.dto';
+import { UpdateUserOrderDto } from 'src/order/dto/update-user-order.dto';
+import { CreateAddressDto } from 'src/address/dto/create-address.dto';
+import { UpdateAddressDto } from 'src/address/dto/update-address.dto';
 
 @Controller('individual')
 export class IndividualClientController {
@@ -79,7 +81,37 @@ export class IndividualClientController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('individual_client')
   @Patch('orders/:id')
-  async updateOneOrder(@Req() req: RequestInfo, @Param('id', ParseIntPipe) id: number, @Body() updateIndividualOrderDto: UpdateIndividualOrderDto) {
-    return this.individualClientService.updateOneOrder(req.user.id, id, updateIndividualOrderDto);
+  async updateOneOrder(@Req() req: RequestInfo, @Param('id', ParseIntPipe) id: number, @Body() updateUserOrderDto: UpdateUserOrderDto) {
+    return this.individualClientService.updateOneOrder(req.user.id, id, updateUserOrderDto);
+  }
+
+  // address
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('individual_client')
+  @Post('create-address')
+  async createAddress(@Req() req: RequestInfo, @Body() createAddressDto: CreateAddressDto) {
+    return this.individualClientService.createAddress(req.user.id, createAddressDto);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('individual_client')
+  @Get('addresses')
+  async getAddresses(@Req() req: RequestInfo) {
+    return this.individualClientService.getAddresses(req.user.id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('individual_client')
+  @Get('addresses/:id')
+  async getOneAddress(@Req() req: RequestInfo, @Param('id', ParseIntPipe) id: number) {
+    return this.individualClientService.getOneAddress(req.user.id, id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('individual_client')
+  @Patch('addresses/:id')
+  async updateOneAddress(@Req() req: RequestInfo, @Param('id', ParseIntPipe) id: number, @Body() updateAddressDto: UpdateAddressDto) {
+    return this.individualClientService.updateOneAddress(req.user.id, id, updateAddressDto);
   }
 }

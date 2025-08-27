@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import type { RequestInfo } from 'src/common/types/request-info';
@@ -128,5 +128,14 @@ export class AdminController {
   @Patch('categories/:id')
   async updateOneCategory(@Param('id', ParseIntPipe) id: number, @Body() updateCategoryDto: UpdateCategoryDto) {
     return this.adminService.updateOneCategory(id, updateCategoryDto);
+  }
+
+  // addresses
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
+  @Get('addresses/:id')
+  async getUserAddresses(@Param('id', ParseIntPipe) id: number, @Query('role') role: 'individual' | 'company') {
+    return this.adminService.getUserAddresses(id, role);
   }
 }
