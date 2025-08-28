@@ -16,6 +16,8 @@ import { UpdateUserOrderDto } from 'src/order/dto/update-user-order.dto';
 import { Address } from 'src/address/entities/address.entity';
 import { CreateAddressDto } from 'src/address/dto/create-address.dto';
 import { UpdateAddressDto } from 'src/address/dto/update-address.dto';
+import { Technician } from 'src/technician/entities/technician.entity';
+import { UserFilterDto } from './dto/user-filter.dto';
 
 interface WithIdAndPassword {
     id: number;
@@ -84,6 +86,15 @@ export class BaseUserService {
     }
 
     // registered user services
+
+    async getUsers(repo: any, userFilterDto?: UserFilterDto) {
+        const findUsers = await repo.find({
+            where: userFilterDto,
+            order: { created_at: 'DESC' },
+        });
+
+        return findUsers;
+    }
 
     async getUser(userId: number, repo: any) {
         const findUser = await repo.findOne({
@@ -279,7 +290,38 @@ export class BaseUserService {
         await this.addressRepo.save(address);
 
         return {
-            message: 'Address  updated successfully',
+            message: 'Address updated successfully',
+            address,
+        };
+    }
+
+    async deleteOneAddress(userId: number, id: number, repo: any) {
+        const user = await this.getUser(userId, repo)
+
+        const relationKey = "companyName" in user ? "company" : "individual";
+
+        const address = await this.addressRepo.findOne({
+            where: { [relationKey]: { id: userId }, id },
+        });
+        if (!address) throw new NotFoundException('Address  not found');
+
+        const usedInOrders = await this.orderRepo.count({
+            where: [
+                { [relationKey]: { id: userId }, address: { id } },
+            ],
+        });
+
+        if (usedInOrders > 0) {
+            throw new BadRequestException('Address cannot be deleted because it is used in an order');
+        }
+
+        await this.addressRepo.delete({
+            id,
+            [relationKey]: { id: userId },
+        });
+
+        return {
+            message: 'Address deleted successfully',
             address,
         };
     }

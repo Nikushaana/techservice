@@ -1,7 +1,7 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IndividualClient } from './entities/individual-client.entity';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { instanceToPlain } from 'class-transformer';
 import { UpdateIndividualDto } from './dto/update-individual.dto';
 import { ChangePasswordDto } from 'src/common/services/base-user/dto/change-password.dto';
@@ -9,8 +9,6 @@ import { ChangeNumberDto, PhoneDto } from 'src/verification-code/dto/verificatio
 import { VerificationCodeService } from 'src/verification-code/verification-code.service';
 import { BaseUserService } from 'src/common/services/base-user/base-user.service';
 import { CreateOrderDto } from 'src/order/dto/create-order.dto';
-import { Order } from 'src/order/entities/order.entity';
-import { Category } from 'src/category/entities/category.entity';
 import { UpdateUserOrderDto } from 'src/order/dto/update-user-order.dto';
 import { CreateAddressDto } from 'src/address/dto/create-address.dto';
 import { UpdateAddressDto } from 'src/address/dto/update-address.dto';
@@ -88,5 +86,9 @@ export class IndividualClientService {
 
   async updateOneAddress(individualId: number, id: number, updateAddressDto: UpdateAddressDto) {
     return this.baseUserService.updateOneAddress(individualId, id, this.individualClientRepo, updateAddressDto);
+  }
+
+  async deleteOneAddress(individualId: number, id: number) {
+    return this.baseUserService.deleteOneAddress(individualId, id, this.individualClientRepo);
   }
 }

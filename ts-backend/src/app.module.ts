@@ -11,6 +11,7 @@ import { CompanyClientModule } from './company-client/company-client.module';
 import { OrderModule } from './order/order.module';
 import { FrontModule } from './front/front.module';
 import { AddressModule } from './address/address.module';
+import { TechnicianModule } from './technician/technician.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { AddressModule } from './address/address.module';
     OrderModule,
     FrontModule,
     AddressModule,
+    TechnicianModule,
   ],
   controllers: [AppController],
   providers: [AppService],

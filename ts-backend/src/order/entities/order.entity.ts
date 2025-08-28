@@ -1,15 +1,14 @@
-import { Exclude } from 'class-transformer';
 import { Address } from 'src/address/entities/address.entity';
 import { Category } from 'src/category/entities/category.entity';
 import { OrderStatus } from 'src/common/types/order-status.enum';
 import { CompanyClient } from 'src/company-client/entities/company-client.entity';
 import { IndividualClient } from 'src/individual-client/entities/individual-client.entity';
+import { Technician } from 'src/technician/entities/technician.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -42,6 +41,9 @@ export class Order {
 
   @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
   status: string;
+
+  @ManyToOne(() => Technician, (technician) => technician.orders, { nullable: true })
+  technician: Technician | null;
 
   @CreateDateColumn()
   created_at: Date;

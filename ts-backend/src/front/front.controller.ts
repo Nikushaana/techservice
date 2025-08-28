@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { FrontService } from './front.service';
+import { UserFilterDto } from 'src/common/services/base-user/dto/user-filter.dto';
 
 @Controller('front')
 export class FrontController {
@@ -8,5 +9,10 @@ export class FrontController {
     @Get('categories')
     async getCategories() {
         return this.frontService.getCategories();
+    }
+
+    @Get('technicians')
+    async getAdminTechnicians(@Query() userFilterDto: UserFilterDto) {
+        return this.frontService.getTechnicians(userFilterDto);
     }
 }

@@ -3,6 +3,6 @@ import { Request } from 'express';
 export interface RequestInfo extends Request {
   user: {
     id: number;
-    role: 'admin' | 'individual_client' | 'company_client' | 'delivery';
+    role: 'admin' | 'individual_client' | 'company_client' | 'technician';
   };
 }

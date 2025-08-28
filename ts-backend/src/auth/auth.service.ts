@@ -14,10 +14,8 @@ import * as bcrypt from 'bcrypt';
 import { instanceToPlain } from 'class-transformer';
 import { AdminToken } from 'src/admin-token/entities/admin-token.entity';
 import { RegisterAdminDto } from './dto/register-admin.dto';
-import { RegisterIndividualClientDto } from './dto/register-individual-client.dto';
 import { IndividualClient } from 'src/individual-client/entities/individual-client.entity';
 import { VerificationCode } from 'src/verification-code/entities/verification-code.entity';
-import { LoginClientDto } from './dto/login-client.dto';
 import { IndividualClientToken } from 'src/individual-client-token/entities/individual-client-token.entity';
 import {
   PhoneDto,
@@ -28,6 +26,10 @@ import { RegisterCompanyClientDto } from './dto/register-company-client.dto';
 import { CompanyClient } from 'src/company-client/entities/company-client.entity';
 import { CompanyClientToken } from 'src/company-client-token/entities/company-client-token.entity';
 import { VerificationCodeService } from 'src/verification-code/verification-code.service';
+import { RegisterIndividualClientOrTechnicianDto } from './dto/register-individual-client-or-technician.dto';
+import { Technician } from 'src/technician/entities/technician.entity';
+import { TechnicianToken } from 'src/technician-token/entities/technician-token.entity';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -51,6 +53,12 @@ export class AuthService {
 
     @InjectRepository(CompanyClientToken)
     private companyClientTokenRepo: Repository<CompanyClientToken>,
+
+    @InjectRepository(Technician)
+    private technicianRepo: Repository<Technician>,
+
+    @InjectRepository(TechnicianToken)
+    private technicianTokenRepo: Repository<TechnicianToken>,
 
     @InjectRepository(VerificationCode)
     private VerificationCodeRepo: Repository<VerificationCode>,
@@ -150,8 +158,8 @@ export class AuthService {
   // individual and company clients
 
   async register(
-    registerDto: RegisterIndividualClientDto | RegisterCompanyClientDto,
-    role: 'individual' | 'company',
+    registerDto: RegisterIndividualClientOrTechnicianDto | RegisterCompanyClientDto,
+    role: 'individual' | 'company' | 'technician',
   ) {
     const codeEntry = await this.VerificationCodeRepo.findOne({
       where: { phone: registerDto.phone, verified: true, type: 'register' },
@@ -161,82 +169,103 @@ export class AuthService {
     const exists =
       (await this.individualClientRepo.findOne({
         where: { phone: registerDto.phone },
-      })) ||
+      }))
+      ||
       (await this.companyClientRepo.findOne({
         where: { phone: registerDto.phone },
-      }));
+      }))
+      ||
+      (await this.technicianRepo.findOne({
+        where: { phone: registerDto.phone },
+      }))
+      ;
 
-    if (exists) throw new BadRequestException('Client already registered');
+    if (exists) throw new BadRequestException('User already registered');
 
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
 
-    const repo: Repository<IndividualClient | CompanyClient> =
+    const repo: Repository<IndividualClient | CompanyClient | Technician> =
       role === 'individual'
         ? this.individualClientRepo
-        : this.companyClientRepo;
+        : role === 'company' ? this.companyClientRepo
+          : this.technicianRepo;
 
-    const client = repo.create({ ...registerDto, password: hashedPassword });
-    await repo.save(client);
+    const user = repo.create({ ...registerDto, password: hashedPassword });
+    await repo.save(user);
 
     await this.VerificationCodeRepo.delete({ phone: registerDto.phone, type: 'register' });
 
     return {
-      message: `${role} client registered successfully`,
-      client: instanceToPlain(client),
+      message: `${role} registered successfully`,
+      user: instanceToPlain(user),
     };
   }
 
-  async login(loginDto: LoginClientDto, role: 'individual' | 'company') {
+  async login(loginUserDto: LoginUserDto, role: 'individual' | 'company' | 'technician') {
     const repo =
       role === 'individual'
         ? this.individualClientRepo
-        : this.companyClientRepo;
+        : role === 'company' ? this.companyClientRepo
+          : this.technicianRepo;
 
-    const client = await repo.findOne({ where: { phone: loginDto.phone } });
-    if (!client) throw new UnauthorizedException('Invalid credentials');
+    const user = await repo.findOne({ where: { phone: loginUserDto.phone } });
+    if (!user) throw new UnauthorizedException('Invalid credentials');
 
-    const isMatch = await bcrypt.compare(loginDto.password, client.password);
+    const isMatch = await bcrypt.compare(loginUserDto.password, user.password);
     if (!isMatch) throw new UnauthorizedException('Invalid credentials');
 
-    const payload = { id: client.id, role: `${role}_client` };
+    const payload = { id: user.id, role };
     const token = this.signToken(payload);
 
     if (role === 'individual') {
       let clientToken = await this.individualClientTokenRepo.findOne({
-        where: { individualClient: { id: client.id } },
+        where: { individualClient: { id: user.id } },
       });
       if (clientToken) {
         clientToken.token = token;
       } else {
         clientToken = this.individualClientTokenRepo.create({
-          individualClient: client,
+          individualClient: user,
           token,
         });
       }
       await this.individualClientTokenRepo.save(clientToken);
-    } else {
+    } else if (role === 'company') {
       let clientToken = await this.companyClientTokenRepo.findOne({
-        where: { companyClient: { id: client.id } },
+        where: { companyClient: { id: user.id } },
       });
       if (clientToken) {
         clientToken.token = token;
       } else {
         clientToken = this.companyClientTokenRepo.create({
-          companyClient: client,
+          companyClient: user,
           token,
         });
       }
       await this.companyClientTokenRepo.save(clientToken);
+    } else {
+      let technicianToken = await this.technicianTokenRepo.findOne({
+        where: { technician: { id: user.id } },
+      });
+      if (technicianToken) {
+        technicianToken.token = token;
+      } else {
+        technicianToken = this.technicianTokenRepo.create({
+          technician: user,
+          token,
+        });
+      }
+      await this.technicianTokenRepo.save(technicianToken);
     }
 
     return {
-      message: `${role} client logged in successfully`,
+      message: `${role} logged in successfully`,
       token,
-      client: instanceToPlain(client),
+      client: instanceToPlain(user),
     };
   }
 
-  async logout(authHeader: string, role: 'individual' | 'company') {
+  async logout(authHeader: string, role: 'individual' | 'company' | 'technician') {
     if (!authHeader) {
       throw new UnauthorizedException('Authorization header missing');
     }
@@ -249,54 +278,60 @@ export class AuthService {
     const result =
       role === 'individual'
         ? await this.individualClientTokenRepo.delete({ token })
-        : await this.companyClientTokenRepo.delete({ token });
+        : role === 'company' ? await this.companyClientTokenRepo.delete({ token })
+          : await this.technicianTokenRepo.delete({ token });
 
     if (result.affected === 0) {
       throw new NotFoundException('Token not found in database');
     }
 
-    return { message: `${role} client logged out successfully` };
+    return { message: `${role} logged out successfully` };
   }
 
-  async sendResetPasswordCode(phoneDto: PhoneDto, role: 'individual' | 'company') {
+  async sendResetPasswordCode(phoneDto: PhoneDto, role: 'individual' | 'company' | 'technician') {
     const result = await this.verificationCodeService.sendCode(phoneDto, 'reset-password', role);
     return { message: `Code ${result.code} sent to ${result.phone}` };
   }
 
   async resetPassword(
     resetPasswordDto: ResetPasswordDto,
-    role: 'individual' | 'company',
+    role: 'individual' | 'company' | 'technician',
   ) {
     await this.verificationCodeService.verifyCode(
-    { phone: resetPasswordDto.phone, code: resetPasswordDto.code },
-    'reset-password',
-  );
+      { phone: resetPasswordDto.phone, code: resetPasswordDto.code },
+      'reset-password',
+    );
 
     const hashedPassword = await bcrypt.hash(resetPasswordDto.password, 10);
 
-    const client =
+    const user =
       role === 'individual'
         ? await this.individualClientRepo.findOne({
           where: { phone: resetPasswordDto.phone },
         })
-        : await this.companyClientRepo.findOne({
+        : role === 'company' ? await this.companyClientRepo.findOne({
           where: { phone: resetPasswordDto.phone },
-        });
+        })
+          : await this.technicianRepo.findOne({
+            where: { phone: resetPasswordDto.phone },
+          });
 
-    if (!client) throw new BadRequestException(`${role} client not found`);
+    if (!user) throw new BadRequestException(`${role} not found`);
 
-    client.password = hashedPassword;
+    user.password = hashedPassword;
     if (role === 'individual') {
-      await this.individualClientRepo.save(client);
+      await this.individualClientRepo.save(user);
+    } else if (role === 'company') {
+      await this.companyClientRepo.save(user);
     } else {
-      await this.companyClientRepo.save(client);
+      await this.technicianRepo.save(user);
     }
 
     await this.VerificationCodeRepo.delete({ phone: resetPasswordDto.phone, type: 'reset-password' });
 
     return {
-      message: `${role} client password reset successfully`,
-      client: instanceToPlain(client),
+      message: `${role} password reset successfully`,
+      client: instanceToPlain(user),
     };
   }
 }

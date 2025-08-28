@@ -8,22 +8,22 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginAdminDto } from './dto/login-admin.dto';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { RegisterAdminDto } from './dto/register-admin.dto';
-import { RegisterIndividualClientDto } from './dto/register-individual-client.dto';
 import {
   PhoneDto,
   ResetPasswordDto,
   VerifyCodeDto,
 } from 'src/verification-code/dto/verification-code.dto';
 import { RegisterCompanyClientDto } from './dto/register-company-client.dto';
-import { LoginClientDto } from './dto/login-client.dto';
+import { RegisterIndividualClientOrTechnicianDto } from './dto/register-individual-client-or-technician.dto';
+import { LoginUserDto } from './dto/login-user.dto';
+import { TokenValidationGuard } from './guards/token-validation.guard';
 
 @Controller('auth/admin')
 export class AdminAuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('register')
   async registerAdmin(@Body() dto: RegisterAdminDto) {
@@ -35,7 +35,7 @@ export class AdminAuthController {
     return this.authService.adminLogin(loginAdminDto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(TokenValidationGuard, RolesGuard)
   @Roles('admin')
   @Delete('logout')
   async AdminLogout(@Headers('authorization') authHeader: string) {
@@ -45,7 +45,7 @@ export class AdminAuthController {
 
 @Controller('auth/individual')
 export class IndividualAuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('send-register-code')
   async IndividualSendRegisterCode(@Body() phoneDto: PhoneDto) {
@@ -59,18 +59,18 @@ export class IndividualAuthController {
 
   @Post('register')
   async IndividualRegister(
-    @Body() registerIndividualClientDto: RegisterIndividualClientDto,
+    @Body() registerIndividualClientOrTechnicianDto: RegisterIndividualClientOrTechnicianDto,
   ) {
-    return this.authService.register(registerIndividualClientDto, 'individual');
+    return this.authService.register(registerIndividualClientOrTechnicianDto, 'individual');
   }
 
   @Post('login')
-  async IndividualLogin(@Body() loginClientDto: LoginClientDto) {
-    return this.authService.login(loginClientDto, 'individual');
+  async IndividualLogin(@Body() loginUserDto: LoginUserDto) {
+    return this.authService.login(loginUserDto, 'individual');
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('individual_client')
+  @UseGuards(TokenValidationGuard, RolesGuard)
+  @Roles('individual')
   @Delete('logout')
   async IndividualLogout(@Headers('authorization') authHeader: string) {
     return this.authService.logout(authHeader, 'individual');
@@ -89,7 +89,7 @@ export class IndividualAuthController {
 
 @Controller('auth/company')
 export class CompanyAuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('send-register-code')
   async CompanySendRegisterCode(@Body() phoneDto: PhoneDto) {
@@ -109,12 +109,12 @@ export class CompanyAuthController {
   }
 
   @Post('login')
-  async CompanyLogin(@Body() loginClientDto: LoginClientDto) {
-    return this.authService.login(loginClientDto, 'company');
+  async CompanyLogin(@Body() loginUserDto: LoginUserDto) {
+    return this.authService.login(loginUserDto, 'company');
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('company_client')
+  @UseGuards(TokenValidationGuard, RolesGuard)
+  @Roles('company')
   @Delete('logout')
   async CompanyLogout(@Headers('authorization') authHeader: string) {
     return this.authService.logout(authHeader, 'company');
@@ -128,5 +128,55 @@ export class CompanyAuthController {
   @Post('reset-password')
   async CompanyResetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     return this.authService.resetPassword(resetPasswordDto, 'company');
+  }
+}
+
+@Controller('auth/technician')
+export class TechnicianAuthController {
+  constructor(private readonly authService: AuthService) { }
+
+  @UseGuards(TokenValidationGuard, RolesGuard)
+  @Roles('admin')
+  @Post('send-register-code')
+  async TechnicianSendRegisterCode(@Body() phoneDto: PhoneDto) {
+    return this.authService.sendRegisterCode(phoneDto);
+  }
+
+  @UseGuards(TokenValidationGuard, RolesGuard)
+  @Roles('admin')
+  @Post('verify-register-code')
+  async TechnicianVerifyRegisterCode(@Body() verifyCodeDto: VerifyCodeDto) {
+    return this.authService.verifyRegisterCode(verifyCodeDto);
+  }
+
+  @UseGuards(TokenValidationGuard, RolesGuard)
+  @Roles('admin')
+  @Post('register')
+  async TechnicianRegister(
+    @Body() registerIndividualClientOrTechnicianDto: RegisterIndividualClientOrTechnicianDto,
+  ) {
+    return this.authService.register(registerIndividualClientOrTechnicianDto, 'technician');
+  }
+
+  @Post('login')
+  async TechnicianLogin(@Body() loginUserDto: LoginUserDto) {
+    return this.authService.login(loginUserDto, 'technician');
+  }
+
+  @UseGuards(TokenValidationGuard, RolesGuard)
+  @Roles('technician')
+  @Delete('logout')
+  async TechnicianLogout(@Headers('authorization') authHeader: string) {
+    return this.authService.logout(authHeader, 'technician');
+  }
+
+  @Post('send-reset-password-code')
+  async TechnicianSendResetPasswordCode(@Body() phoneDto: PhoneDto) {
+    return this.authService.sendResetPasswordCode(phoneDto, 'technician');
+  }
+
+  @Post('reset-password')
+  async TechnicianResetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.authService.resetPassword(resetPasswordDto, 'technician');
   }
 }

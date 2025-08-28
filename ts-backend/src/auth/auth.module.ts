@@ -13,10 +13,13 @@ import {
   AdminAuthController,
   CompanyAuthController,
   IndividualAuthController,
+  TechnicianAuthController,
 } from './auth.controller';
 import { CompanyClient } from 'src/company-client/entities/company-client.entity';
 import { CompanyClientToken } from 'src/company-client-token/entities/company-client-token.entity';
 import { VerificationCodeModule } from 'src/verification-code/verification-code.module';
+import { Technician } from 'src/technician/entities/technician.entity';
+import { TechnicianToken } from 'src/technician-token/entities/technician-token.entity';
 
 @Module({
   imports: [
@@ -27,6 +30,8 @@ import { VerificationCodeModule } from 'src/verification-code/verification-code.
       IndividualClientToken,
       CompanyClient,
       CompanyClientToken,
+      Technician,
+      TechnicianToken,
       VerificationCode,
     ]),
     VerificationCodeModule,
@@ -45,6 +50,7 @@ import { VerificationCodeModule } from 'src/verification-code/verification-code.
     AdminAuthController,
     IndividualAuthController,
     CompanyAuthController,
+    TechnicianAuthController
   ],
 })
-export class AuthModule {}
+export class AuthModule { }

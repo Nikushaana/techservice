@@ -1,18 +1,13 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompanyClient } from './entities/company-client.entity';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { instanceToPlain } from 'class-transformer';
 import { UpdateCompanyDto } from './dto/update-company.dto';
-import * as bcrypt from 'bcrypt';
-import { IndividualClient } from 'src/individual-client/entities/individual-client.entity';
-import { ChangeNumberDto, PhoneDto, VerifyCodeDto } from 'src/verification-code/dto/verification-code.dto';
+import { ChangeNumberDto, PhoneDto } from 'src/verification-code/dto/verification-code.dto';
 import { VerificationCodeService } from 'src/verification-code/verification-code.service';
-import { VerificationCode } from 'src/verification-code/entities/verification-code.entity';
 import { ChangePasswordDto } from 'src/common/services/base-user/dto/change-password.dto';
 import { BaseUserService } from 'src/common/services/base-user/base-user.service';
-import { Category } from 'src/category/entities/category.entity';
-import { Order } from 'src/order/entities/order.entity';
 import { CreateOrderDto } from 'src/order/dto/create-order.dto';
 import { UpdateUserOrderDto } from 'src/order/dto/update-user-order.dto';
 import { CreateAddressDto } from 'src/address/dto/create-address.dto';
@@ -91,5 +86,9 @@ export class CompanyClientService {
 
   async updateOneAddress(companyId: number, id: number, updateAddressDto: UpdateAddressDto) {
     return this.baseUserService.updateOneAddress(companyId, id, this.companyClientRepo, updateAddressDto);
+  }
+  
+  async deleteOneAddress(companyId: number, id: number) {
+    return this.baseUserService.deleteOneAddress(companyId, id, this.companyClientRepo);
   }
 }

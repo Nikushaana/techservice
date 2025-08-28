@@ -5,6 +5,7 @@ import { IndividualClient } from 'src/individual-client/entities/individual-clie
 import { Repository } from 'typeorm';
 import { CompanyClient } from 'src/company-client/entities/company-client.entity';
 import { VerificationCode } from './entities/verification-code.entity';
+import { Technician } from 'src/technician/entities/technician.entity';
 
 @Injectable()
 export class VerificationCodeService {
@@ -15,23 +16,28 @@ export class VerificationCodeService {
         @InjectRepository(CompanyClient)
         private companyClientRepo: Repository<CompanyClient>,
 
+        @InjectRepository(Technician)
+        private technicianRepo: Repository<Technician>,
+
         @InjectRepository(VerificationCode)
         private VerificationCodeRepo: Repository<VerificationCode>,
     ) { }
 
-    async sendCode(phoneDto: PhoneDto, type: 'register' | 'reset-password' | 'change-number', role?: 'individual' | 'company') {
+    async sendCode(phoneDto: PhoneDto, type: 'register' | 'reset-password' | 'change-number', role?: 'individual' | 'company' | 'technician') {
         if (type === 'register' || type === 'change-number') {
             const exists =
                 (await this.individualClientRepo.findOne({ where: { phone: phoneDto.phone } })) ||
-                (await this.companyClientRepo.findOne({ where: { phone: phoneDto.phone } }));
+                (await this.companyClientRepo.findOne({ where: { phone: phoneDto.phone } })) ||
+                (await this.technicianRepo.findOne({ where: { phone: phoneDto.phone } }));
             if (exists) throw new BadRequestException('Phone already used');
         } else if (type === 'reset-password') {
             if (!role) throw new BadRequestException('Role is required for reset password');
             const exists =
                 role === 'individual'
                     ? await this.individualClientRepo.findOne({ where: { phone: phoneDto.phone } })
-                    : await this.companyClientRepo.findOne({ where: { phone: phoneDto.phone } });
-            if (!exists) throw new NotFoundException(`${role} client not found`);
+                    : role === 'company' ? await this.companyClientRepo.findOne({ where: { phone: phoneDto.phone } })
+                        : await this.technicianRepo.findOne({ where: { phone: phoneDto.phone } });
+            if (!exists) throw new NotFoundException(`${role} not found`);
         }
 
         const code = Math.floor(1000 + Math.random() * 9000).toString();

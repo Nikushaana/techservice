@@ -1,5 +1,4 @@
 import { Exclude } from 'class-transformer';
-import { IsBoolean } from 'class-validator';
 import { Address } from 'src/address/entities/address.entity';
 import { IndividualClientToken } from 'src/individual-client-token/entities/individual-client-token.entity';
 import { Order } from 'src/order/entities/order.entity';

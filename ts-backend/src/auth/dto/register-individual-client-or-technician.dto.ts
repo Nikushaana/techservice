@@ -1,6 +1,6 @@
 import { Matches, MinLength, IsString, IsNotEmpty } from 'class-validator';
 
-export class RegisterIndividualClientDto {
+export class RegisterIndividualClientOrTechnicianDto {
   @IsString()
   @Matches(/^5[0-9]{8}$/, {
     message: 'Phone number must start with 5 and be 9 digits long',

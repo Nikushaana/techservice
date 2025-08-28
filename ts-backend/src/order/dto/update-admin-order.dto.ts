@@ -13,6 +13,10 @@ export class UpdateAdminOrderDto {
     addressId: number;
 
     @IsOptional()
+    @IsNumber({}, { each: false })
+    technicianId: number | null;
+
+    @IsOptional()
     @IsString()
     @IsNotEmpty()
     brand: string;
