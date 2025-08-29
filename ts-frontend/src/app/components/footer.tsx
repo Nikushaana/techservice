@@ -108,8 +108,8 @@ export default function Footer() {
   ]);
 
   return (
-    <footer className="w-full bg-gray-100 border-t-[2px] border-gray-300">
-      <div className="max-w-[1140px] mx-auto flex flex-col md:flex-row justify-between items-start md:items-center px-4 py-10 md:py-20 gap-10 md:gap-0 rounded-t-[40px]">
+    <footer className="w-full">
+      <div className="max-w-[1140px] bg-gray-100 border-[2px] border-gray-300 mx-auto flex flex-col md:flex-row justify-between items-start md:items-center px-4 py-10 md:py-20 gap-10 md:gap-0 rounded-t-[40px]">
         {/* Logo & Social */}
         <div className="flex flex-col gap-6 md:gap-10 w-full md:w-auto">
           <img src="/images/logo.png" alt="logo" className="w-[60px]" />
