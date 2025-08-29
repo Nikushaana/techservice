@@ -4,7 +4,7 @@ import Header from "./components/header";
 import Footer from "./components/footer";
 
 export const metadata: Metadata = {
-  title: "Tech Service",
+  title: "Jessi | ტექნიკის სერვისი",
   description: "სერვისი დაგეხმარება საოჯახო ტექნიკის შეკეთებაში",
 };
 
@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="flex flex-col items-center">
+      <body className="flex flex-col items-center ">
         <Header />
         <div className="min-h-[100vh] w-full flex flex-col">{children}</div>
         <Footer />
