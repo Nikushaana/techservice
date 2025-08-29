@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: regularFont;
+  src: url(/fonts/FiraGO-Regular.otf);
+}
+
+@font-face {
+  font-family: boldFont;
+  src: url(/fonts/FiraGO-Bold.otf);
+}
+
+body,
+p,
+a,
+::placeholder,
+input,
+textarea,
+li,
+ul,
+ol,
+button {
+  font-family: regularFont;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: boldFont;
+}
+
+.showScroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #51087e;
+  border-radius: 10px;
+}
+
+@theme {
+  --color-myBlue: #1e40af;
+  --color-myLightBlue: #2563eb;
+
+  --color-myGray: #111827;
+  --color-myLightGray: #374151;
+}
