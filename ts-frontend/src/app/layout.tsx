@@ -6,7 +6,7 @@ import ScrollToTop from "./components/scroll-to-top";
 import BurgerMenu from "./components/burger-menu/burger-menu";
 
 export const metadata: Metadata = {
-  title: "Tech-Service | ტექნიკის სერვისი",
+  title: "Tech Service | საოჯახო ტექნიკის სერვის-ცენტრი",
   description: "სერვისი დაგეხმარება საოჯახო ტექნიკის შეკეთებაში",
 };
 

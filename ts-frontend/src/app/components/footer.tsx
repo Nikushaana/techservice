@@ -23,7 +23,7 @@ export default function Footer() {
         <div className="flex flex-col gap-6 md:gap-10 w-full md:w-auto">
           <img src="/images/logo.png" alt="logo" className="w-[60px]" />
           <p className="text-myLightGray text-sm md:text-base max-w-[250px]">
-            Tech-Service — პირველი სრულად ციფრული სერვისი თქვენი ტექნიკის
+            Tech Service — პირველი სრულად ციფრული სერვისი თქვენი ტექნიკის
             შესაკეთებლად
           </p>
           <div className="flex gap-6 text-2xl md:text-3xl">
