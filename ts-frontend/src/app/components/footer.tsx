@@ -94,7 +94,7 @@ import { BsFacebook, BsTwitter, BsYoutube } from "react-icons/bs";
 export default function Footer() {
   const [menu] = useState([
     { id: 1, text: "მთავარი" },
-    { id: 2, text: "რატომ ჯესი?" },
+    { id: 2, text: "რატომ Tech-Service?" },
     { id: 3, text: "შეფასებები" },
     { id: 4, text: "FAQ" },
   ]);
@@ -114,7 +114,7 @@ export default function Footer() {
         <div className="flex flex-col gap-6 md:gap-10 w-full md:w-auto">
           <img src="/images/logo.png" alt="logo" className="w-[60px]" />
           <p className="text-myLightGray text-sm md:text-base max-w-[250px]">
-            ჯესი — პირველი სრულად ციფრული სერვისი თქვენი ტექნიკისთვის
+            Tech-Service — პირველი სრულად ციფრული სერვისი თქვენი ტექნიკის შესაკეთებლად
           </p>
           <div className="flex gap-6 text-2xl md:text-3xl">
             <BsFacebook className="text-myGray hover:text-myLightBlue duration-100 cursor-pointer" />
@@ -127,9 +127,9 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row gap-10 md:gap-20 w-full md:w-auto">
           {/* Quick Links */}
           <div className="flex flex-col gap-3">
-            <h1 className="text-[20px] md:text-[25px] text-myGray font-semibold">
+            <h2 className="text-[20px] md:text-[25px] text-myGray font-semibold">
               სწრაფი ძიება
-            </h1>
+            </h2>
             {menu.map((item) => (
               <p
                 key={item.id}
@@ -142,9 +142,9 @@ export default function Footer() {
 
           {/* Other Info */}
           <div className="flex flex-col gap-3">
-            <h1 className="text-[20px] md:text-[25px] text-myGray font-semibold">
+            <h2 className="text-[20px] md:text-[25px] text-myGray font-semibold">
               სხვა ინფორმაცია
-            </h1>
+            </h2>
             {other.map((item) => (
               <p
                 key={item.id}

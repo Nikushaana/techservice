@@ -305,15 +305,14 @@ export default function Home() {
             <hr className="border-gray-300 border-[1px]" />
             <div className="flex flex-col gap-y-[15px] sm:gap-y-[20px]">
               <h2 className="text-white text-[22px] sm:text-[30px] mt-[10px]">
-                შეაკეთე ტექნიკა სახლიდან გაუსვლელად.
+                შეაკეთე ტექნიკა სახლიდან გაუსვლელად
               </h2>
               <p className="text-white text-[15px] sm:text-[17px]">
                 შენი კომფორტი ჩვენი პრიორიტეტია – გვაცნობე პრობლემა, ჩვენი
-                დელივერი ტექნიკას წაიღებს, პროფესიონალი ხელოსანი შეაკეთებს და
-                ისევ უსაფრთხოდ დაგიბრუნებს.
+                გუნდის წევრები კი იზრუნებენ მის შეკეთებაზე.
               </p>
               <p className="text-white text-[15px] sm:text-[17px]">
-                სანდო, სწრაფი და გამჭვირვალე მომსახურება – სწორედ ისე, როგორც
+                სანდო, სწრაფი და გამჭვირვალე მომსახურება – სწორედ ისეთი, როგორიც
                 გჭირდება.
               </p>
             </div>
@@ -360,15 +359,15 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 items-stretch gap-[30px] sm:gap-[50px]">
           <div className="flex flex-col gap-y-[25px] sm:gap-y-[40px]">
             <h2 className="text-[18px] sm:text-[20px] text-gray-400">
-              რატომ უნდა აირჩიოთ ჯესი?
+              რატომ უნდა აირჩიოთ Tech-Service?
             </h2>
             <h2 className="text-[30px] sm:text-[40px] text-myGray">
               სწრაფი, მარტივი და სანდო სერვისი თქვენი ტექნიკისთვის
             </h2>
             <p className="text-myLightGray text-[14px] sm:text-[16px]">
-              ჯესი გაგიმარტივებთ ცხოვრებას: თქვენ მხოლოდ შეავსებთ მოთხოვნას,
-              ჩვენი დელივერი ტექნიკას წაიღებს, ხელოსანი შეაკეთებს და ჩვენ
-              მოგიტანთ უკან. სწრაფი, სანდო და გამჭვირვალე — ყველაფერი ერთი
+              Tech-Service გაგიმარტივებთ ცხოვრებას: თქვენ მხოლოდ შეავსებთ მოთხოვნას,
+              ჩვენი დელივერი ტექნიკას წაიღებს, ხელოსანი შეაკეთებს და ისევ
+              მოგიტანთ უკან. სწრაფი, სანდო და გამჭვირვალე — ყველაფერი ერთ
               სერვისში.
             </p>
             <div className="bg-myLightBlue hover:bg-myBlue self-start duration-100 h-[40px] sm:h-[45px] px-[20px] sm:px-[30px] cursor-pointer rounded-full flex items-center text-white">
@@ -467,7 +466,7 @@ export default function Home() {
                 id: 2,
                 quest:
                   "რამდენ ხანში მოვა დელივერი და რამდენი დრო დასჭირდება შეკეთებას?",
-                ans: "დელივერი მოვა 24 საათის განმავლობაში, ხოლო შეკეთება საშუალოდ 1–3 სამუშაო დღეს იძენს, დამოკიდებულია პრობლემის სირთულეზე.",
+                ans: "დელივერი მოვა 24 საათის განმავლობაში, ხოლო შეკეთება საშუალოდ 1–3 სამუშაო დღეს საჭიროებს, დამოკიდებულია პრობლემის სირთულეზე.",
               },
               {
                 id: 3,

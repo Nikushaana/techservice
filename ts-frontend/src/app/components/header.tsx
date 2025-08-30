@@ -51,7 +51,7 @@ import { HiMenu, HiX } from "react-icons/hi";
 export default function Header() {
   const [menu, setMenu] = useState([
     { id: 1, text: "მთავარი" },
-    { id: 2, text: "რატომ ჯესი?" },
+    { id: 2, text: "რატომ Tech-Service?" },
     { id: 3, text: "შეფასებები" },
     { id: 4, text: "FAQ" },
   ]);
