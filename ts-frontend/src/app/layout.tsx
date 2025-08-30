@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="flex flex-col items-center ">
         <Header />
-        <div className="min-h-[100vh] w-full flex flex-col">{children}</div>
+        <div className="w-full flex flex-col">{children}</div>
         <Footer />
         {/* other components */}
         <ScrollToTop />

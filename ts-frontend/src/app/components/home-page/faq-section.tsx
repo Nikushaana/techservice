@@ -3,8 +3,10 @@
 import React, { useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 export default function FaqSection() {
+  const router = useRouter();
   const [activeFaq, setActiveFaq] = useState<number | null>();
 
   const [faq, setFaq] = useState([
@@ -64,7 +66,12 @@ export default function FaqSection() {
           </div>
         ))}
 
-        <Button className="flex h-[45px] px-[20px] sm:px-[30px] self-center cursor-pointer">
+        <Button
+          onClick={() => {
+            router.push("/auth/login");
+          }}
+          className="flex h-[45px] px-[20px] sm:px-[30px] self-center cursor-pointer"
+        >
           მოითხოვე სერვისი
         </Button>
       </div>

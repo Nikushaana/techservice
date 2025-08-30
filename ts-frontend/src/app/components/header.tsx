@@ -6,15 +6,25 @@ import { Button } from "./ui/button";
 import { useMenuStore } from "../store/useMenuStore";
 import { scrollToSection } from "../utils/scroll";
 import { useBurgerMenuStore } from "../store/burgerMenuStore";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Header() {
   const menu = useMenuStore((state) => state.menu);
   const { isOpen, toggleBurgerMenu } = useBurgerMenuStore();
+  const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <header className="z-10 w-full">
       <div className="max-w-[1140px] mx-auto flex items-center justify-between h-[100px] px-4">
-        <img src="/images/logo.png" alt="logo" className="h-[60px]" />
+        <img
+          onClick={() => {
+            router.push("/");
+          }}
+          src="/images/logo.png"
+          alt="logo"
+          className="h-[60px] cursor-pointer"
+        />
 
         {/* Desktop Menu */}
         <nav className="hidden md:flex gap-6">
@@ -22,9 +32,15 @@ export default function Header() {
             <h1
               key={item.id}
               onClick={() => {
-                scrollToSection(item.target);
+                if (pathname.split("/")[1]) {
+                  router.push("/");
+                } else {
+                  scrollToSection(item.target);
+                }
               }}
-              className="cursor-pointer text-white hover:text-myLightBlue duration-100"
+              className={`${
+                pathname.split("/")[1] ? "text-myGray" : "text-white"
+              } cursor-pointer hover:text-myLightBlue duration-100`}
             >
               {item.text}
             </h1>
@@ -32,7 +48,12 @@ export default function Header() {
         </nav>
 
         {/* Request Button (Desktop) */}
-        <Button className="hidden md:flex h-[45px] px-[20px] sm:px-[30px] cursor-pointer">
+        <Button
+          onClick={() => {
+            router.push("/auth/login");
+          }}
+          className="hidden md:flex h-[45px] px-[20px] sm:px-[30px] cursor-pointer"
+        >
           მოითხოვე სერვისი
         </Button>
 
@@ -40,7 +61,9 @@ export default function Header() {
         <div className="md:hidden flex items-center">
           <button
             onClick={toggleBurgerMenu}
-            className={`text-white text-2xl focus:outline-none duration-150 ${
+            className={`${
+              pathname.split("/")[2] ? "text-myGray" : "text-white"
+            } text-2xl focus:outline-none duration-150 ${
               isOpen && "rotate-[180deg]"
             }`}
           >
