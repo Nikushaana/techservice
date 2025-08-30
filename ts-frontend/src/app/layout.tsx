@@ -4,7 +4,7 @@ import Header from "./components/header";
 import Footer from "./components/footer";
 
 export const metadata: Metadata = {
-  title: "Jessi | ტექნიკის სერვისი",
+  title: "Tech-Service | ტექნიკის სერვისი",
   description: "სერვისი დაგეხმარება საოჯახო ტექნიკის შეკეთებაში",
 };
 
