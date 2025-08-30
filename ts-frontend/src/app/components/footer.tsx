@@ -2,14 +2,11 @@
 
 import React, { useState } from "react";
 import { BsFacebook, BsTwitter, BsYoutube } from "react-icons/bs";
+import { useMenuStore } from "../store/useMenuStore";
+import { scrollToSection } from "../utils/scroll";
 
 export default function Footer() {
-  const [menu] = useState([
-    { id: 1, text: "მთავარი" },
-    { id: 2, text: "რატომ Tech-Service?" },
-    { id: 3, text: "შეფასებები" },
-    { id: 4, text: "FAQ" },
-  ]);
+  const menu = useMenuStore((state) => state.menu);
 
   const [other] = useState([
     { id: 1, text: "ჩვენი კომპანია" },
@@ -26,7 +23,8 @@ export default function Footer() {
         <div className="flex flex-col gap-6 md:gap-10 w-full md:w-auto">
           <img src="/images/logo.png" alt="logo" className="w-[60px]" />
           <p className="text-myLightGray text-sm md:text-base max-w-[250px]">
-            Tech-Service — პირველი სრულად ციფრული სერვისი თქვენი ტექნიკის შესაკეთებლად
+            Tech-Service — პირველი სრულად ციფრული სერვისი თქვენი ტექნიკის
+            შესაკეთებლად
           </p>
           <div className="flex gap-6 text-2xl md:text-3xl">
             <BsFacebook className="text-myGray hover:text-myLightBlue duration-100 cursor-pointer" />
@@ -45,6 +43,7 @@ export default function Footer() {
             {menu.map((item) => (
               <p
                 key={item.id}
+                onClick={() => scrollToSection(item.target)}
                 className="cursor-pointer text-myLightGray hover:text-myLightBlue duration-100 text-sm md:text-base"
               >
                 {item.text}

@@ -1,20 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { HiMenu, HiX } from "react-icons/hi";
+import { Button } from "./ui/button";
+import { useMenuStore } from "../store/useMenuStore";
+import { scrollToSection } from "../utils/scroll";
+import { useBurgerMenuStore } from "../store/burgerMenuStore";
 
 export default function Header() {
-  const [menu, setMenu] = useState([
-    { id: 1, text: "მთავარი" },
-    { id: 2, text: "რატომ Tech-Service?" },
-    { id: 3, text: "შეფასებები" },
-    { id: 4, text: "FAQ" },
-  ]);
-
-  const [isOpen, setIsOpen] = useState(false);
+  const menu = useMenuStore((state) => state.menu);
+  const { isOpen, toggleBurgerMenu } = useBurgerMenuStore();
 
   return (
-    <header className="z-20 w-full">
+    <header className="z-10 w-full">
       <div className="max-w-[1140px] mx-auto flex items-center justify-between h-[100px] px-4">
         <img src="/images/logo.png" alt="logo" className="h-[60px]" />
 
@@ -23,6 +21,9 @@ export default function Header() {
           {menu.map((item) => (
             <h1
               key={item.id}
+              onClick={() => {
+                scrollToSection(item.target);
+              }}
               className="cursor-pointer text-white hover:text-myLightBlue duration-100"
             >
               {item.text}
@@ -31,15 +32,17 @@ export default function Header() {
         </nav>
 
         {/* Request Button (Desktop) */}
-        <div className="hidden md:flex bg-myLightBlue hover:bg-myBlue duration-100 h-[45px] px-[20px] sm:px-[30px] cursor-pointer rounded-full items-center text-white">
-          <p>მოითხოვე სერვისი</p>
-        </div>
+        <Button className="hidden md:flex h-[45px] px-[20px] sm:px-[30px] cursor-pointer">
+          მოითხოვე სერვისი
+        </Button>
 
         {/* Mobile Hamburger */}
         <div className="md:hidden flex items-center">
           <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="text-white text-2xl focus:outline-none"
+            onClick={toggleBurgerMenu}
+            className={`text-white text-2xl focus:outline-none duration-150 ${
+              isOpen && "rotate-[180deg]"
+            }`}
           >
             {isOpen ? <HiX /> : <HiMenu />}
           </button>

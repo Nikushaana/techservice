@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "./components/header";
 import Footer from "./components/footer";
+import ScrollToTop from "./components/scroll-to-top";
+import BurgerMenu from "./components/burger-menu/burger-menu";
 
 export const metadata: Metadata = {
   title: "Tech-Service | ტექნიკის სერვისი",
@@ -19,6 +21,9 @@ export default function RootLayout({
         <Header />
         <div className="min-h-[100vh] w-full flex flex-col">{children}</div>
         <Footer />
+        {/* other components */}
+        <ScrollToTop />
+        <BurgerMenu />
       </body>
     </html>
   );
